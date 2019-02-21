@@ -7,7 +7,7 @@ interface StoreOptions {
   storageKey: BehaviorSubject<string>;
 };
 
-export abstract class GenericLocalSingleStore<T extends object> {
+export abstract class GenericSingleStore<T extends object> {
   protected item: BehaviorSubject<T> = new BehaviorSubject<T>(undefined);
   protected classObject: any;
   protected storage: Storage;
