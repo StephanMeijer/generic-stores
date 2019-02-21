@@ -11,9 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const rxjs_1 = require("rxjs");
 ;
 class GenericSingleStore {
-    constructor(classObject, options = {}) {
+    constructor(options = {}) {
         this.item = new rxjs_1.BehaviorSubject(undefined);
-        this.classObject = classObject;
         this.options = Object.assign({ storage: undefined }, options);
         this.options.storageKey.subscribe((key) => {
             this.load(key);
@@ -29,7 +28,7 @@ class GenericSingleStore {
         });
     }
     updateProperties(properties) {
-        this.set(new this.classObject(Object.assign({}, this.item.value, properties)));
+        this.set(Object.assign({}, this.item.value, properties));
     }
     load(key = undefined) {
         return __awaiter(this, void 0, void 0, function* () {

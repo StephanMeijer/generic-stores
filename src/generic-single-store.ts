@@ -9,12 +9,9 @@ interface StoreOptions {
 
 export abstract class GenericSingleStore<T extends object> {
   protected item: BehaviorSubject<T | undefined> = new BehaviorSubject<T | undefined>(undefined);
-  protected classObject: any;
   protected options: StoreOptions;
 
-  constructor(classObject: any, options: Partial<StoreOptions> = {} as StoreOptions) {
-    this.classObject = classObject;
-
+  constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
     this.options = { storage: undefined, ...options } as StoreOptions;
 
     this.options.storageKey.subscribe((key: string) => {
@@ -32,7 +29,7 @@ export abstract class GenericSingleStore<T extends object> {
   }
 
   public updateProperties(properties: Partial<T>) {
-    this.set(new this.classObject({ ...this.item.value as object, ...properties }));
+    this.set({ ...this.item.value as object, ...properties } as T);
   }
 
   protected async load(key: string | undefined = undefined): Promise<void> {

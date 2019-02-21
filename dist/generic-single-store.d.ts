@@ -7,9 +7,8 @@ interface StoreOptions {
 }
 export declare abstract class GenericSingleStore<T extends object> {
     protected item: BehaviorSubject<T | undefined>;
-    protected classObject: any;
     protected options: StoreOptions;
-    constructor(classObject: any, options?: Partial<StoreOptions>);
+    constructor(options?: Partial<StoreOptions>);
     get(): BehaviorSubject<T | undefined>;
     set(item: T): Promise<void>;
     updateProperties(properties: Partial<T>): void;
