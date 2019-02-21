@@ -51,7 +51,7 @@ var GenericSingleStore = /** @class */ (function () {
         if (options === void 0) { options = {}; }
         var _this = this;
         this.item = new BehaviorSubject(undefined);
-        this.options = __assign({ storage: undefined }, options);
+        this.options = __assign({ storage: undefined, encoder: function (subject) { return JSON.stringify(subject); }, decoder: function (subject) { return JSON.parse(subject); } }, options);
         this.options.storageKey.subscribe(function (key) {
             _this.load(key);
         });

@@ -12,7 +12,12 @@ export abstract class GenericSingleStore<T extends object> {
   protected options: StoreOptions;
 
   constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
-    this.options = { storage: undefined, ...options } as StoreOptions;
+    this.options = {
+      storage: undefined,
+      encoder: (subject: any) => JSON.stringify(subject),
+      decoder: (subject: string) => JSON.parse(subject),
+      ...options
+    } as StoreOptions;
 
     this.options.storageKey.subscribe((key: string) => {
       this.load(key);
