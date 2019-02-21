@@ -8,12 +8,11 @@ interface StoreOptions {
 };
 
 export abstract class GenericSingleStore<T extends object> {
-  protected item: BehaviorSubject<T> = new BehaviorSubject<T>(undefined);
+  protected item: BehaviorSubject<T | undefined> = new BehaviorSubject<T | undefined>(undefined);
   protected classObject: any;
-  protected storage: Storage;
   protected options: StoreOptions;
 
-  constructor(classObject, options: Partial<StoreOptions> = {} as StoreOptions) {
+  constructor(classObject: any, options: Partial<StoreOptions> = {} as StoreOptions) {
     this.classObject = classObject;
 
     this.options = { storage: undefined, ...options } as StoreOptions;
@@ -23,11 +22,11 @@ export abstract class GenericSingleStore<T extends object> {
     });
   }
 
-  public get(): BehaviorSubject<T> {
+  public get(): BehaviorSubject<T | undefined> {
     return this.item;
   }
 
-  public async set(item: T): Promise<any> {
+  public async set(item: T): Promise<void> {
     this.item.next(item);
     await this.save(item);
   }
@@ -36,14 +35,18 @@ export abstract class GenericSingleStore<T extends object> {
     this.set(new this.classObject({ ...this.item.value as object, ...properties }));
   }
 
-  protected async load(key: string = undefined): Promise<void> {
+  protected async load(key: string | undefined = undefined): Promise<void> {
     if (this.options.storage) {
       if (!key) {
         key = this.options.storageKey.value;
       }
 
       const data = await this.options.storage.getItem(key);
-      this.item.next(this.options.decoder(data) as T);
+
+      if (data) {
+        const decoded = this.options.decoder(data);
+        this.item.next(decoded as T);
+      }
     }
 
     return Promise.resolve();

@@ -1,10 +1,10 @@
 {
   "name": "generic-stores",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Generic RxJS stores (simple)",
-  "main": "src/main.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && mkdir dist && ./node_modules/typescript/bin/tsc"
   },
   "keywords": [
     "store",
@@ -14,5 +14,8 @@
   "license": "UNLICENSED",
   "dependencies": {
     "rxjs": "^6.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3"
   }
 }
