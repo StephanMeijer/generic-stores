@@ -34,11 +34,7 @@ export abstract class GenericSingleStore<T extends object> {
 
   protected async load(key: string | undefined = undefined): Promise<void> {
     if (this.options.storage) {
-      if (!key) {
-        key = this.options.storageKey.value;
-      }
-
-      const data = await this.options.storage.getItem(key);
+      const data = await this.options.storage.getItem(key || this.options.storageKey.value);
 
       if (data) {
         const decoded = this.options.decoder(data);
