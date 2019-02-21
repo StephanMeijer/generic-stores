@@ -8,10 +8,12 @@ interface StoreOptions {
 };
 
 export abstract class GenericSingleStore<T extends object> {
-  protected item: BehaviorSubject<T | undefined> = new BehaviorSubject<T | undefined>(undefined);
+  protected item: BehaviorSubject<T | undefined>;
   protected options: StoreOptions;
 
   constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
+    this.item = BehaviorSubject.create();
+
     this.options = {
       storage: undefined,
       encoder: (subject: any) => JSON.stringify(subject),
@@ -20,7 +22,9 @@ export abstract class GenericSingleStore<T extends object> {
     } as StoreOptions;
 
     this.options.storageKey.subscribe((key: string) => {
-      this.load(key);
+      if (key) {
+        this.load(key);
+      }
     });
   }
 
