@@ -1,0 +1,18 @@
+{
+  "name": "generic-stores",
+  "version": "1.0.0",
+  "description": "Generic RxJS stores (simple)",
+  "main": "src",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "store",
+    "rxjs"
+  ],
+  "author": "Stephan Meijer <me@stephanmeijer.com>",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "rxjs": "^6.4.0"
+  }
+}
