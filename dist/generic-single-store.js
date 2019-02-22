@@ -50,7 +50,8 @@ var GenericSingleStore = /** @class */ (function () {
     function GenericSingleStore(options) {
         if (options === void 0) { options = {}; }
         var _this = this;
-        this.item = BehaviorSubject.create();
+        this.item = new BehaviorSubject(undefined);
+        var data = this.load();
         this.options = __assign({ storage: undefined, encoder: function (subject) { return JSON.stringify(subject); }, decoder: function (subject) { return JSON.parse(subject); } }, options);
         this.options.storageKey.subscribe(function (key) {
             if (key) {
@@ -81,12 +82,13 @@ var GenericSingleStore = /** @class */ (function () {
     GenericSingleStore.prototype.load = function (key) {
         if (key === void 0) { key = undefined; }
         return __awaiter(this, void 0, void 0, function () {
-            var data, decoded;
+            var storageKey, data, decoded;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.options.storage) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.options.storage.getItem(key || this.options.storageKey.value)];
+                        storageKey = key || this.storageKey;
+                        if (!(this.options.storage && storageKey)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.options.storage.getItem(storageKey)];
                     case 1:
                         data = _a.sent();
                         if (data) {
@@ -105,9 +107,9 @@ var GenericSingleStore = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.options.storage) return [3 /*break*/, 2];
+                        if (!(this.options.storage && this.storageKey)) return [3 /*break*/, 2];
                         data = this.options.encoder(item);
-                        return [4 /*yield*/, this.options.storage.setItem(this.options.storageKey.value, data)];
+                        return [4 /*yield*/, this.options.storage.setItem(this.storageKey, data)];
                     case 1:
                         _a.sent();
                         _a.label = 2;
@@ -116,6 +118,13 @@ var GenericSingleStore = /** @class */ (function () {
             });
         });
     };
+    Object.defineProperty(GenericSingleStore.prototype, "storageKey", {
+        get: function () {
+            return this.options.storageKey.value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return GenericSingleStore;
 }());
 export { GenericSingleStore };

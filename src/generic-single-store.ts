@@ -8,11 +8,11 @@ interface StoreOptions {
 };
 
 export abstract class GenericSingleStore<T extends object> {
-  protected item: BehaviorSubject<T | undefined>;
+  protected item: BehaviorSubject<T | undefined> = new BehaviorSubject<T | undefined>(undefined);
   protected options: StoreOptions;
 
   constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
-    this.item = BehaviorSubject.create();
+    const data = this.load();
 
     this.options = {
       storage: undefined,
@@ -42,8 +42,10 @@ export abstract class GenericSingleStore<T extends object> {
   }
 
   protected async load(key: string | undefined = undefined): Promise<void> {
-    if (this.options.storage) {
-      const data = await this.options.storage.getItem(key || this.options.storageKey.value);
+    const storageKey = key || this.storageKey;
+
+    if (this.options.storage && storageKey) {
+      const data = await this.options.storage.getItem(storageKey);
 
       if (data) {
         const decoded = this.options.decoder(data);
@@ -55,11 +57,15 @@ export abstract class GenericSingleStore<T extends object> {
   }
 
   protected async save(item: T): Promise<void> {
-    if (this.options.storage) {
+    if (this.options.storage && this.storageKey) {
       const data = this.options.encoder(item);
-      await this.options.storage.setItem(this.options.storageKey.value, data);
+      await this.options.storage.setItem(this.storageKey, data);
     }
 
     return Promise.resolve();
+  }
+
+  get storageKey(): string | undefined {
+    return this.options.storageKey.value;
   }
 }

@@ -14,5 +14,6 @@ export declare abstract class GenericSingleStore<T extends object> {
     updateProperties(properties: Partial<T>): void;
     protected load(key?: string | undefined): Promise<void>;
     protected save(item: T): Promise<void>;
+    readonly storageKey: string | undefined;
 }
 export {};
