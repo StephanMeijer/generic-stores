@@ -1,6 +1,6 @@
 {
   "name": "generic-stores",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Generic RxJS stores (simple)",
   "main": "dist/index.js",
   "scripts": {

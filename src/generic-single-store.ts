@@ -12,8 +12,6 @@ export abstract class GenericSingleStore<T extends object> {
   protected options: StoreOptions;
 
   constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
-    const data = this.load();
-
     this.options = {
       storage: undefined,
       encoder: (subject: any) => JSON.stringify(subject),
