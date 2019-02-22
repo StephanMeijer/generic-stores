@@ -1,27 +1,29 @@
 import { BehaviorSubject } from 'rxjs';
 
-interface StoreOptions {
+interface StoreOptions<T> {
   storage: Storage | undefined;
-  encoder: (subject: any) => string;
-  decoder: (subject: string) => any;
+  encoder: (subject: T) => string;
+  decoder: (subject: string) => T;
   storageKey: BehaviorSubject<string>;
+  initialValue: T | undefined;
 };
 
 export abstract class GenericSingleStore<T extends object> {
   protected item: BehaviorSubject<T | undefined> = new BehaviorSubject<T | undefined>(undefined);
-  protected options: StoreOptions;
+  protected options: StoreOptions<T>;
 
-  constructor(options: Partial<StoreOptions> = {} as StoreOptions) {
+  constructor(options: Partial<StoreOptions<T>> = {} as StoreOptions<T>) {
     this.options = {
       storage: undefined,
-      encoder: (subject: any) => JSON.stringify(subject),
+      encoder: (subject: T) => JSON.stringify(subject),
       decoder: (subject: string) => JSON.parse(subject),
+      initialValue: undefined,
       ...options
-    } as StoreOptions;
+    } as StoreOptions<T>;
 
     this.options.storageKey.subscribe((key: string) => {
       if (key) {
-        this.load(key);
+        this.load(key, this.options.initialValue);
       }
     });
   }
@@ -39,15 +41,15 @@ export abstract class GenericSingleStore<T extends object> {
     this.set({ ...this.item.value as object, ...properties } as T);
   }
 
-  protected async load(key: string | undefined = undefined): Promise<void> {
-    const storageKey = key || this.storageKey;
-
-    if (this.options.storage && storageKey) {
-      const data = await this.options.storage.getItem(storageKey);
+  protected async load(key: string | undefined, initialValue: T | undefined): Promise<void> {
+    if (this.options.storage && key) {
+      const data = await this.options.storage.getItem(key);
 
       if (data) {
         const decoded = this.options.decoder(data);
         this.item.next(decoded as T);
+      } else if (initialValue !== undefined) {
+        this.item.next(initialValue);
       }
     }
 

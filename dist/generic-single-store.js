@@ -51,10 +51,10 @@ var GenericSingleStore = /** @class */ (function () {
         if (options === void 0) { options = {}; }
         var _this = this;
         this.item = new BehaviorSubject(undefined);
-        this.options = __assign({ storage: undefined, encoder: function (subject) { return JSON.stringify(subject); }, decoder: function (subject) { return JSON.parse(subject); } }, options);
+        this.options = __assign({ storage: undefined, encoder: function (subject) { return JSON.stringify(subject); }, decoder: function (subject) { return JSON.parse(subject); }, initialValue: undefined }, options);
         this.options.storageKey.subscribe(function (key) {
             if (key) {
-                _this.load(key);
+                _this.load(key, _this.options.initialValue);
             }
         });
     }
@@ -78,21 +78,22 @@ var GenericSingleStore = /** @class */ (function () {
     GenericSingleStore.prototype.updateProperties = function (properties) {
         this.set(__assign({}, this.item.value, properties));
     };
-    GenericSingleStore.prototype.load = function (key) {
-        if (key === void 0) { key = undefined; }
+    GenericSingleStore.prototype.load = function (key, initialValue) {
         return __awaiter(this, void 0, void 0, function () {
-            var storageKey, data, decoded;
+            var data, decoded;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        storageKey = key || this.storageKey;
-                        if (!(this.options.storage && storageKey)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.options.storage.getItem(storageKey)];
+                        if (!(this.options.storage && key)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.options.storage.getItem(key)];
                     case 1:
                         data = _a.sent();
                         if (data) {
                             decoded = this.options.decoder(data);
                             this.item.next(decoded);
+                        }
+                        else if (initialValue !== undefined) {
+                            this.item.next(initialValue);
                         }
                         _a.label = 2;
                     case 2: return [2 /*return*/, Promise.resolve()];
